@@ -1,0 +1,35 @@
+services:
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-${UMAMI_VERSION:?required}
+    container_name: umami
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - traefik-network
+      - postgres-network
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-network
+
+      # Router — IP kısıtlamalı
+      - traefik.http.routers.umami.rule=Host(`${UMAMI_SERVER_HOSTNAME:?required}`)
+      - traefik.http.routers.umami.entrypoints=https
+      - traefik.http.routers.umami.tls.certresolver=cloudflare
+      - traefik.http.routers.umami.middlewares=trusted@file
+      - traefik.http.routers.umami.service=umami
+
+      # Service
+      - traefik.http.services.umami.loadbalancer.server.port=3000
+
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/heartbeat"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  traefik-network:
+    external: true
+  postgres-network:
+    external: true
