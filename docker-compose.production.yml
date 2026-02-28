@@ -11,12 +11,18 @@ services:
       - traefik.enable=true
       - traefik.docker.network=traefik-network
 
-      # Router — IP kısıtlamalı
+      # Router — panel, IP kısıtlamalı
       - traefik.http.routers.umami.rule=Host(`${UMAMI_SERVER_HOSTNAME:?required}`)
       - traefik.http.routers.umami.entrypoints=https
       - traefik.http.routers.umami.tls.certresolver=cloudflare
       - traefik.http.routers.umami.middlewares=trusted@file
       - traefik.http.routers.umami.service=umami
+
+      # Router — tracking endpoint, herkese açık
+      - traefik.http.routers.umami-tracker.rule=Host(`${UMAMI_SERVER_HOSTNAME:?required}`) && (Path(`/api/send`) || Path(`/script.js`))
+      - traefik.http.routers.umami-tracker.entrypoints=https
+      - traefik.http.routers.umami-tracker.tls.certresolver=cloudflare
+      - traefik.http.routers.umami-tracker.service=umami
 
       # Service
       - traefik.http.services.umami.loadbalancer.server.port=3000
