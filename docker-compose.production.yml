@@ -1,6 +1,6 @@
 services:
   umami:
-    image: ghcr.io/umami-software/umami:postgresql-${UMAMI_VERSION:?required}
+    image: ghcr.io/umami-software/umami:${UMAMI_VERSION:?required}
     container_name: umami
     restart: unless-stopped
     env_file: .env
