@@ -19,7 +19,7 @@ services:
       - traefik.http.routers.umami.service=umami
 
       # Router — tracking endpoint, herkese açık
-      - traefik.http.routers.umami-tracker.rule=Host(`${UMAMI_SERVER_HOSTNAME:?required}`) && (Path(`/api/send`) || Path(`${TRACKER_SCRIPT_NAME:?required}`))
+      - traefik.http.routers.umami-tracker.rule=Host(`${UMAMI_SERVER_HOSTNAME:?required}`) && (Path(`/api/send`) || Path(`/${TRACKER_SCRIPT_NAME:?required}`))
       - traefik.http.routers.umami-tracker.entrypoints=https
       - traefik.http.routers.umami-tracker.tls.certresolver=cloudflare
       - traefik.http.routers.umami-tracker.service=umami
